@@ -1,0 +1,12 @@
+ef74990b04d9c142026ff202e94516a9 *DESCRIPTION
+739f9fadc304b5b1f27f43cc2387ce58 *NAMESPACE
+694e6c6fa5a8a2cd8cbf0f5816af93fa *R/calpassapi.R
+827b1c7114da299c68e004c9de652675 *README.md
+c469078e5d6f173739a487f256453d73 *build/vignette.rds
+e5af9d6d83bcf6b35f47919d77d1dd55 *inst/doc/Tutorial.R
+339278913424a8de3fbe1f102df8cdb4 *inst/doc/Tutorial.Rmd
+d1e7ea1073c536298b53ab45294da258 *inst/doc/Tutorial.html
+a7d6f82e2738cf73227c91e0e8b9d367 *man/calpass_create_isk.Rd
+9f9987c597b7725f2516618ba410478c *man/calpass_get_token.Rd
+33350e6db97cde06fa4d3b5d52e35947 *man/calpass_query.Rd
+339278913424a8de3fbe1f102df8cdb4 *vignettes/Tutorial.Rmd
