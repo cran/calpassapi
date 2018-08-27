@@ -1,6 +1,6 @@
 Package: calpassapi
 Title: R Interface to Access CalPASS API
-Version: 0.0.1
+Version: 0.0.2
 Authors@R: person("Vinh", "Nguyen", email = "nguyenvq714@gmail.com", role = c("aut", "cre"))
 Description: Implements methods for querying data from CalPASS using its API.
  CalPASS Plus.  MMAP API V1. <https://mmap.calpassplus.org/docs/index.html>.
@@ -15,8 +15,8 @@ RoxygenNote: 6.0.1
 Suggests: knitr, rmarkdown
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2018-08-24 22:21:04 UTC; vnguyen216
+Packaged: 2018-08-27 18:20:03 UTC; vnguyen216
 Author: Vinh Nguyen [aut, cre]
 Maintainer: Vinh Nguyen <nguyenvq714@gmail.com>
 Repository: CRAN
-Date/Publication: 2018-08-24 22:44:24 UTC
+Date/Publication: 2018-08-27 19:24:32 UTC

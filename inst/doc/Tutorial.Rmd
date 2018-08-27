@@ -26,12 +26,21 @@ library(calpassapi)
 library(dplyr) # Ease in manipulations with data frames
 ```
 
+## Setup
+If the user does not want to expose their CalPASS API username and password in their R script, then it is recommended that the user specify their credentials in their `.Renviron` file in their home directory (execute `Sys.getenv('HOME')` in R to determine the R home directory) as follows:
+```
+cp_api_uid='my_username'
+cp_api_pwd='my_password'
+```
+
+R will automatically load these environment variables at start up and the user will not have to specify `username` and `password` in `calpass_get_token`.
+
 ## Obtain access token
 First we need to authenticate with CalPASS using our credentials in order to obtain a token that will allow us to query data from the API.
 
 ```{r, eval=FALSE}
-cp_token <- calpass_get_token(username='my_cp_api_uid', password='my_cp_api_pwd')
-# cp_token <- calpass_get_token() ## if cp_api_uid and cp_api_pwd are set in .Renviron
+cp_token <- calpass_get_token(username='my_cp_api_uid', password='my_cp_api_pwd', client_id='my_client_id', scope='my_scope')
+# cp_token <- calpass_get_token(client_id='my_client_id', scope='my_scope') ## if cp_api_uid and cp_api_pwd are set in .Renviron
 ```
 
 This token will be used in `calpass_query` and `calpass_query_many` in the `token` argument.
@@ -68,8 +77,22 @@ After we have the `interSegmentKey`'s, we can now query data from CalPASS.
 calpass_query(interSegmentKey=isk
             , token=cp_token, endpoint='transcript')
 ## multiple
-dfResults <- calpass_query(interSegmentKey=df$isk
+dfResults <- calpass_query_many(interSegmentKey=df$isk
                          , token=cp_token
                          , endpoint='transcript'
+                           )
+```
+
+## Multiple batches (when there are many interSegmentKey's)
+The CALPASS API currently has a limit of 150 calls per minute (60 seconds).  These are specified by default in the `api_call_limit` and `limit_per_n_sec` arguments in `calpass_query_many`.  If the user has a need beyond these limits, or if the user would like to break the calls into batches, then the user should specify `wait=TRUE`, and `calpass_query_many` will break the calls into batches of `api_call_limit` calls.
+
+```{r, eval=FALSE}
+## batches
+dfResults <- calpass_query_many(interSegmentKey=df$isk
+                         , token=cp_token
+                         , endpoint='transcript'
+                         , api_call_limit=2 ## batches of 2
+                         , limit_per_n_sec=10 ## every 10 seconds
+                         , wait=TRUE
                            )
 ```

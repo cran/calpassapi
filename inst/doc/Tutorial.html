@@ -12,7 +12,7 @@
 
 <meta name="author" content="Vinh Nguyen" />
 
-<meta name="date" content="2018-08-24" />
+<meta name="date" content="2018-08-27" />
 
 <title>calpassapi Tutorial</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">calpassapi Tutorial</h1>
 <h4 class="author"><em>Vinh Nguyen</em></h4>
-<h4 class="date"><em>2018-08-24</em></h4>
+<h4 class="date"><em>2018-08-27</em></h4>
 
 
 
@@ -88,11 +88,18 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(calpassapi)
 <span class="kw">library</span>(dplyr) <span class="co"># Ease in manipulations with data frames</span></code></pre></div>
 </div>
+<div id="setup" class="section level2">
+<h2>Setup</h2>
+<p>If the user does not want to expose their CalPASS API username and password in their R script, then it is recommended that the user specify their credentials in their <code>.Renviron</code> file in their home directory (execute <code>Sys.getenv('HOME')</code> in R to determine the R home directory) as follows:</p>
+<pre><code>cp_api_uid='my_username'
+cp_api_pwd='my_password'</code></pre>
+<p>R will automatically load these environment variables at start up and the user will not have to specify <code>username</code> and <code>password</code> in <code>calpass_get_token</code>.</p>
+</div>
 <div id="obtain-access-token" class="section level2">
 <h2>Obtain access token</h2>
 <p>First we need to authenticate with CalPASS using our credentials in order to obtain a token that will allow us to query data from the API.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cp_token &lt;-<span class="st"> </span><span class="kw">calpass_get_token</span>(<span class="dt">username=</span><span class="st">'my_cp_api_uid'</span>, <span class="dt">password=</span><span class="st">'my_cp_api_pwd'</span>)
-<span class="co"># cp_token &lt;- calpass_get_token() ## if cp_api_uid and cp_api_pwd are set in .Renviron</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cp_token &lt;-<span class="st"> </span><span class="kw">calpass_get_token</span>(<span class="dt">username=</span><span class="st">'my_cp_api_uid'</span>, <span class="dt">password=</span><span class="st">'my_cp_api_pwd'</span>, <span class="dt">client_id=</span><span class="st">'my_client_id'</span>, <span class="dt">scope=</span><span class="st">'my_scope'</span>)
+<span class="co"># cp_token &lt;- calpass_get_token(client_id='my_client_id', scope='my_scope') ## if cp_api_uid and cp_api_pwd are set in .Renviron</span></code></pre></div>
 <p>This token will be used in <code>calpass_query</code> and <code>calpass_query_many</code> in the <code>token</code> argument.</p>
 </div>
 <div id="create-intersegmentkeys-for-each-student" class="section level2">
@@ -132,9 +139,21 @@ df <span class="op">%&gt;%</span>
 <span class="kw">calpass_query</span>(<span class="dt">interSegmentKey=</span>isk
             , <span class="dt">token=</span>cp_token, <span class="dt">endpoint=</span><span class="st">'transcript'</span>)
 ## multiple
-dfResults &lt;-<span class="st"> </span><span class="kw">calpass_query</span>(<span class="dt">interSegmentKey=</span>df<span class="op">$</span>isk
+dfResults &lt;-<span class="st"> </span><span class="kw">calpass_query_many</span>(<span class="dt">interSegmentKey=</span>df<span class="op">$</span>isk
                          , <span class="dt">token=</span>cp_token
                          , <span class="dt">endpoint=</span><span class="st">'transcript'</span>
+                           )</code></pre></div>
+</div>
+<div id="multiple-batches-when-there-are-many-intersegmentkeys" class="section level2">
+<h2>Multiple batches (when there are many interSegmentKey’s)</h2>
+<p>The CALPASS API currently has a limit of 150 calls per minute (60 seconds). These are specified by default in the <code>api_call_limit</code> and <code>limit_per_n_sec</code> arguments in <code>calpass_query_many</code>. If the user has a need beyond these limits, or if the user would like to break the calls into batches, then the user should specify <code>wait=TRUE</code>, and <code>calpass_query_many</code> will break the calls into batches of <code>api_call_limit</code> calls.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## batches
+dfResults &lt;-<span class="st"> </span><span class="kw">calpass_query_many</span>(<span class="dt">interSegmentKey=</span>df<span class="op">$</span>isk
+                         , <span class="dt">token=</span>cp_token
+                         , <span class="dt">endpoint=</span><span class="st">'transcript'</span>
+                         , <span class="dt">api_call_limit=</span><span class="dv">2</span> ## batches of 2
+                         , <span class="dt">limit_per_n_sec=</span><span class="dv">10</span> ## every 10 seconds
+                         , <span class="dt">wait=</span><span class="ot">TRUE</span>
                            )</code></pre></div>
 </div>
 
